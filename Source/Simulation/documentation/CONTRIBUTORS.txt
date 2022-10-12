@@ -1,0 +1,17 @@
+Boni Lab Malaria Simulation (MaSim) Contributors
+
+Principal Investigator:
+  Maciej Boni
+  
+Lead Scientists:
+  Kien Tran
+  Trần Đăng Nguyên
+  Thư Tran
+  Robert Zupko II
+
+Other Contributors:
+  Pakhi Agarwal
+  Đặng Duy Hoàng Giang
+  Eric Lee
+  Haojun Li
+  

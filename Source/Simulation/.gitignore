@@ -1,0 +1,21 @@
+
+# Ignore IDE directories
+.idea
+.vscode
+.vs
+.DS_Store
+
+# Ignore build artifacts
+build*
+bin
+node_modules
+Testing
+cmake-*
+
+# Ignore the backups of diagrams
+documentation/diagrams/*.~vsdx
+
+# Ignore default output and data files
+out
+monthly_data\.txt
+reporter\.txt
