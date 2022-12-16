@@ -10,6 +10,9 @@ import numpy
 import random
 import sys
 
+BIN_SIZE = 100
+THRESHOLD = 3500
+
 FILENAME = 'cells.csv'
 POPULATION = '../../Data/GIS/bfa_population.asc'
 
@@ -21,12 +24,13 @@ import ascFile as asc
 
 # Load the population data
 population = []
+largePopulation = []
 for row in range(0, header['nrows']):
     for col in range(0, header['ncols']):
         if data[row][col] == header['nodata']: continue
         population.append(int(data[row][col]))
 
-# Convert to a numpy array and sort,  note the original indices
+# Convert to a numpy array and sort, note the original indices
 population = numpy.array(population)
 indices = numpy.argsort(population)
 population = numpy.sort(population)
@@ -35,17 +39,21 @@ population = numpy.sort(population)
 with open(FILENAME, 'w') as cells:
     cells.write('population,cell\n')
     
-    # Itinerate through the list in reverse, randomly select a cell from the blocks
+    # Start by selecting all of the high population cells
     last = len(population) - 1
-    first = last - 100
+    while population[last] > THRESHOLD:
+        cells.write('{},{}\n'.format(population[last], indices[last]))
+        last -= 1
+
+    # Now itinerate through the list in reverse, randomly select a cell from the blocks
+    first = last - BIN_SIZE
     while last > 0: 
         # Select a random value from the range
         ndx = random.randrange(first, last)
-        print(ndx, population[ndx], indices[ndx])
         cells.write('{},{}\n'.format(population[ndx], indices[ndx]))
 
         # Move to the next bin
-        last -= 100
-        first -= 100
+        last -= BIN_SIZE
+        first -= BIN_SIZE
         if first < 0:
             first = 0
