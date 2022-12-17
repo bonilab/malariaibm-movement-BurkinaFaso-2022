@@ -7,6 +7,7 @@
 ##
 import csv
 import math
+import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -26,6 +27,10 @@ REPLICATE_COUNT = 50
 # Database study ids
 MODEL = 17551
 MARSHALL = 17546
+
+# Data filenames
+MODEL_CSV = 'model_data.csv'
+MARSHALL_CSV = 'marshall_data.csv'
 
 def get_replicate_data(replicateId, filter):
     sql = """
@@ -80,6 +85,42 @@ def process(cells, population, model, filename):
             ))
 
 
+# Generate the plot from the data sets
+def plot():
+    # Load the data from disk
+    model = pd.read_csv(MODEL_CSV, sep=',', header=0)
+    marshall = pd.read_csv(MARSHALL_CSV, sep=',', header=0)
+
+    # Prepare the plot
+    matplotlib.rc_file('matplotlib-scatter')
+    fig, plot = plt.subplots()
+    
+    # Add the data to the plot
+    x = np.log10(model['population'])
+    plot.scatter(x, model['mean'], facecolors='#D3D3D3', edgecolors='black', label='PSU')
+    plot.scatter(x, marshall['mean'], facecolors='#5A5A5A', edgecolors='black', label='Marshall')
+    
+    # Format the ticks
+    plot.set_xticklabels(format_ticks(plot.get_xticks()))
+    plot.set_ylim([0, max(max(model['mean']), max(marshall['mean'])) + 100])
+    plot.set_xlim([min(x) - 0.1, max(x) + 0.1])
+
+    # Format then rest of the plot
+    plot.invert_xaxis()
+    plot.set_ylabel('Trips to Cell')
+    plot.set_xlabel('Cell Population')
+    plot.legend(frameon=False)
+    
+    fig.tight_layout()
+    fig.savefig('working.png', dpi=150)
+
+def format_ticks(ticks):
+    labels = []
+    for tick in [math.pow(10, value) for value in ticks]:
+        labels.append(int(tick))
+    return labels    
+    
+
 def main(load):
     # Read the population and cells that were selected
     population = []
@@ -91,24 +132,14 @@ def main(load):
             population.append(row[0])
             cells.append(row[1])
 
+    # Reload the data if need be
     if load:
-        process(cells, population, MODEL, 'model_data.csv')
-        process(cells, population, MARSHALL, 'marshall_data.csv')
+        process(cells, population, MODEL, MODEL_CSV)
+        process(cells, population, MARSHALL, MARSHALL_CSV)
         print('\nData load complete!')
 
-    model = pd.read_csv('model_data.csv', sep=',', header=0)
-    marshall = pd.read_csv('marshall_data.csv', sep=',', header=0)
-
-    fig, plot = plt.subplots()
-
-    x = np.log10(model['population'])
-    
-    plot.invert_xaxis()
-    plot.scatter(x, model['mean'], label='PSU')
-    plot.scatter(x, marshall['mean'], label='Marshall')
-    plot.legend()
-    
-    fig.savefig('working.png', dpi=150)
+    # Generate the plots with the saved data
+    plot()
 
 
 if __name__ == '__main__':

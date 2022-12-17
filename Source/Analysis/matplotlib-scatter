@@ -1,0 +1,32 @@
+## Font formatting
+font.family  : monospace
+font.size    : 28.0
+font.monospace  : Ubuntu Mono, DejaVu Sans Mono, Andale Mono, monospace
+
+lines.markersize : 15
+
+axes.grid          : False      ## display grid or not
+axes.titlesize     : 24         ## fontsize of the axes title
+axes.titlepad      : 18         ## pad between axes and title in points
+axes.labelsize     : 26         ## fontsize of the x any y labels
+axes.labelpad      : 10         ## space between label and axis
+axes.xmargin       : .1
+axes.ymargin       : .1
+
+xtick.major.pad     : 5
+xtick.labelsize     : 22        ## fontsize of the tick labels
+ytick.labelsize     : 22  
+
+grid.alpha     : 0.4
+
+## legend
+legend.framealpha    : 0.7      ## legend patch transparency
+legend.fontsize      : 26
+
+## figure size
+figure.figsize     : 35, 20    ## figure size in inches
+figure.dpi         : 100       ## figure dots per inch
+
+## Subplot formatting
+figure.subplot.hspace : 0.3
+figure.subplot.wspace : 0.3

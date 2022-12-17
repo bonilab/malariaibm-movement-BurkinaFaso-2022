@@ -11,7 +11,7 @@ import random
 import sys
 
 BIN_SIZE = 100
-THRESHOLD = 3500
+THRESHOLD = 7000
 
 FILENAME = 'cells.csv'
 POPULATION = '../../Data/GIS/bfa_population.asc'
