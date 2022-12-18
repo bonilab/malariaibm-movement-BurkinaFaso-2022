@@ -3,7 +3,7 @@ font.family  : monospace
 font.size    : 28.0
 font.monospace  : Ubuntu Mono, DejaVu Sans Mono, Andale Mono, monospace
 
-lines.markersize : 15
+lines.markersize : 10
 
 axes.grid          : False      ## display grid or not
 axes.titlesize     : 24         ## fontsize of the axes title
@@ -25,7 +25,7 @@ legend.fontsize      : 26
 
 ## figure size
 figure.figsize     : 35, 20    ## figure size in inches
-figure.dpi         : 100       ## figure dots per inch
+figure.dpi         : 300       ## figure dots per inch
 
 ## Subplot formatting
 figure.subplot.hspace : 0.3

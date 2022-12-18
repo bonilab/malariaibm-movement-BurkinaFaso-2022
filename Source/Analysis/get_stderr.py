@@ -10,6 +10,7 @@ import math
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
+import os
 import pandas as pd
 import sys
 
@@ -20,8 +21,7 @@ from utility import progressBar
 
 # General constants for the script
 CONNECTION = "host=masimdb.vmhost.psu.edu dbname=burkinafaso user=sim password=sim"
-#LOCATIONS = '../../Data/analysis_cells.csv'
-LOCATIONS = 'data/cells.csv'
+LOCATIONS = '../../Data/Movement/analysis_cells.csv'
 REPLICATE_COUNT = 50
 
 # Database study ids
@@ -29,10 +29,10 @@ MODEL = 17551
 MARSHALL = 17546
 
 # Data filenames
-MODEL_CSV = 'data/model_data.csv'
-MARSHALL_CSV = 'data/marshall_data.csv'
-RAW_MODEL_CSV = 'data/raw_model_data.csv'
-RAW_MARSHALL_CSV = 'data/raw_marshall_data.csv'
+MODEL_CSV = '../../Data/Movement/model_data.csv'
+MARSHALL_CSV = '../../Data/Movement/marshall_data.csv'
+RAW_MODEL_CSV = '../../Data/Movement/raw_model_data.csv'
+RAW_MARSHALL_CSV = '../../Data/Movement/raw_marshall_data.csv'
 
 
 def get_replicate_data(replicateId, filter):
@@ -97,11 +97,35 @@ def plot_scatter():
     matplotlib.rc_file('matplotlib-scatter')
     fig, plot = plt.subplots()
 
-    # Add the data to the plot
+    # Plot by population and mean
     x = np.log10(model['population'])
-    plot.scatter(x, model['mean'], facecolors='#D3D3D3', edgecolors='black', label='PSU')
-    plot.scatter(x, marshall['mean'], facecolors='#5A5A5A', edgecolors='black', label='Marshall')
+    plot.errorbar(x, marshall['mean'], marshall['std'], 
+                    linestyle='None', ecolor='black', elinewidth=1.5, zorder=1)    
+    plot.scatter(x, marshall['mean'], label='Marshall et al. Model',
+                    facecolors='#5A5A5A', edgecolors='black', zorder=3)        
+    plot.errorbar(x, model['mean'], model['std'], 
+                    linestyle='None', ecolor='black', elinewidth=1.5, zorder=2)
+    plot.scatter(x, model['mean'], label='Mathmatical Model with Travel Surface',
+                    facecolors='#D3D3D3', edgecolors='black', zorder=4)    
     
+    # # Plot by mean and population    
+    # plot.errorbar(marshall['mean'], marshall['population'], marshall['std'], 
+    #                 linestyle='None', ecolor='black', elinewidth=1.5, zorder=1)    
+    # plot.scatter(marshall['mean'], marshall['population'], label='Marshall',
+    #                 facecolors='#5A5A5A', edgecolors='black', zorder=3)        
+    # plot.errorbar(model['mean'], model['population'], model['std'], 
+    #                 linestyle='None', ecolor='black', elinewidth=1.5, zorder=2)
+    # plot.scatter(model['mean'], model['population'], label='PSU',
+    #                 facecolors='#D3D3D3', edgecolors='black', zorder=4)
+    # plot.set_ylim([0, 220000])
+    # plot.set_xlim([0, 4100])
+    
+    
+    # Add the labeled points to the map
+    plot.annotate('Bobo-Dioulasso', (np.log10(56000), 3400))        # Bobo-Dioulasso, population = 57734, trips = 3474.14
+    plot.annotate('Ouagadougou', (np.log10(200000), 3800))          # Ouagadougou, population = 203266, trips = 3981.72
+    plot.annotate('Ouagadougou (Outskirts)', (np.log10(2100), 986)) # Ouagadougou / Outskirts, population = 2159, trips = 986
+            
     # Format the ticks
     plot.set_xticklabels(format_ticks(plot.get_xticks()))
     plot.set_ylim([0, max(max(model['mean']), max(marshall['mean'])) + 100])
@@ -109,12 +133,12 @@ def plot_scatter():
 
     # Format then rest of the plot
     plot.invert_xaxis()
-    plot.set_ylabel('Trips to Cell')
+    plot.set_ylabel('Mean Trips to Cell')
     plot.set_xlabel('Cell Population')
     plot.legend(frameon=False)
     
     fig.tight_layout()
-    fig.savefig('out/working.png', dpi=150)
+    fig.savefig('out/Fig. 5 - 300 dpi.png')
 
 def format_ticks(ticks):
     labels = []
@@ -172,8 +196,9 @@ def main(load):
         print('\nData load complete!')
 
     # Generate the plots with the saved data
-    plot_boxplot()
+    plot_scatter()
 
 
 if __name__ == '__main__':
+    if not os.path.exists('out'): os.mkdir('out')
     main(False)
