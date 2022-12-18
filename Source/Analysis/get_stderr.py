@@ -21,7 +21,7 @@ from utility import progressBar
 # General constants for the script
 CONNECTION = "host=masimdb.vmhost.psu.edu dbname=burkinafaso user=sim password=sim"
 #LOCATIONS = '../../Data/analysis_cells.csv'
-LOCATIONS = 'cells.csv'
+LOCATIONS = 'data/cells.csv'
 REPLICATE_COUNT = 50
 
 # Database study ids
@@ -29,8 +29,11 @@ MODEL = 17551
 MARSHALL = 17546
 
 # Data filenames
-MODEL_CSV = 'model_data.csv'
-MARSHALL_CSV = 'marshall_data.csv'
+MODEL_CSV = 'data/model_data.csv'
+MARSHALL_CSV = 'data/marshall_data.csv'
+RAW_MODEL_CSV = 'data/raw_model_data.csv'
+RAW_MARSHALL_CSV = 'data/raw_marshall_data.csv'
+
 
 def get_replicate_data(replicateId, filter):
     sql = """
@@ -85,8 +88,7 @@ def process(cells, population, model, filename):
             ))
 
 
-# Generate the plot from the data sets
-def plot():
+def plot_scatter():
     # Load the data from disk
     model = pd.read_csv(MODEL_CSV, sep=',', header=0)
     marshall = pd.read_csv(MARSHALL_CSV, sep=',', header=0)
@@ -94,7 +96,7 @@ def plot():
     # Prepare the plot
     matplotlib.rc_file('matplotlib-scatter')
     fig, plot = plt.subplots()
-    
+
     # Add the data to the plot
     x = np.log10(model['population'])
     plot.scatter(x, model['mean'], facecolors='#D3D3D3', edgecolors='black', label='PSU')
@@ -112,13 +114,44 @@ def plot():
     plot.legend(frameon=False)
     
     fig.tight_layout()
-    fig.savefig('working.png', dpi=150)
+    fig.savefig('out/working.png', dpi=150)
 
 def format_ticks(ticks):
     labels = []
     for tick in [math.pow(10, value) for value in ticks]:
         labels.append(int(tick))
-    return labels    
+    return labels  
+
+
+# Generate the plot from the data sets
+def plot_boxplot():
+    # Load the data from disk
+    model = pd.read_csv(RAW_MODEL_CSV, sep=',', header=None)
+    x  = model.loc[:,1].tolist()
+    model = model.drop(columns=[0, 1])
+    marshall = pd.read_csv(RAW_MARSHALL_CSV, sep=',', header=None)
+    marshall = marshall.drop(columns=[0, 1])
+
+    # Prepare the plot
+    matplotlib.rc_file('matplotlib-scatter')
+    fig, plot = plt.subplots()
+    
+    # Add the data to the plot
+    bp_model = plot.boxplot(model.T, 
+                            showfliers=False, notch=True, patch_artist=True, 
+                            boxprops=dict(facecolor='#D3D3D3', color='black'), medianprops=dict(color='black'))
+    bp_marshall = plot.boxplot(marshall.T, 
+                               showfliers=False, notch=True, patch_artist=True, 
+                               boxprops=dict(facecolor='#5A5A5A', color='black'), medianprops=dict(color='black'))
+
+    # Format the plot
+    plot.set_ylabel('Trips to Cell')
+    plot.set_ylim([0, 4500])
+    plot.tick_params(axis='x', which='both', bottom=False, top=False, labelbottom=False)
+    plot.legend([bp_model["boxes"][0], bp_marshall["boxes"][0]], ['PSU', 'Marshall'], loc='upper right', frameon=False)
+
+    fig.tight_layout()
+    fig.savefig('working.png')
     
 
 def main(load):
@@ -139,8 +172,8 @@ def main(load):
         print('\nData load complete!')
 
     # Generate the plots with the saved data
-    plot()
+    plot_boxplot()
 
 
 if __name__ == '__main__':
-    main(True)
+    main(False)
