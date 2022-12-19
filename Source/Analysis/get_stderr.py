@@ -29,6 +29,7 @@ MODEL = 17551
 MARSHALL = 17546
 
 # Data filenames
+MERGED_CSV = '../../Data/Movement/merged_data.csv'
 MODEL_CSV = '../../Data/Movement/model_data.csv'
 MARSHALL_CSV = '../../Data/Movement/marshall_data.csv'
 RAW_MODEL_CSV = '../../Data/Movement/raw_model_data.csv'
@@ -86,6 +87,42 @@ def process(cells, population, model, filename):
                 row.std(), 
                 row.std() / math.sqrt(len(row))
             ))
+
+
+def plot_scatter_trips():
+    # Load the data from disk
+    data = pd.read_csv(MERGED_CSV, sep=',', header=0)
+    data = data.sort_values(by='model_mean', ascending=False)
+    print(data)
+
+    # Prepare the plot
+    matplotlib.rc_file('matplotlib-scatter')
+    fig, plot = plt.subplots()
+        
+    x = range(0, len(data['population']))
+    plot.errorbar(x, data['marshall_mean'], data['marshall_sd'], 
+                  linestyle='None', ecolor='black', elinewidth=1.5, zorder=1)    
+    plot.scatter(x, data['marshall_mean'], c=data['population'],
+                 label='Marshall et al. Model',
+                 cmap='gist_gray', edgecolors='black', zorder=3)        
+    
+    plot.errorbar(x, data['model_mean'], data['model_sd'], 
+                  linestyle='None', ecolor='black', elinewidth=1.5, zorder=2)
+    sp = plot.scatter(x, data['model_mean'], c=data['population'], 
+                      label='Mathmatical Model with Travel Surface',
+                      marker='s', cmap='gist_gray', edgecolors='black', zorder=4)    
+    
+    plot.set_xlim([-1, len(data['model_mean']) + 1])
+    plot.set_ylim([0, max(data['model_mean']) + 100])
+    plot.set_ylabel('Mean Trips to Cell')
+    plot.xaxis.set_major_formatter(plt.NullFormatter())
+    plot.legend(frameon=False)
+    
+    cb = fig.colorbar(sp)
+    cb.set_label('Cell Population')
+
+    fig.tight_layout()
+    fig.savefig('out/testing.png')
 
 
 def plot_scatter():
@@ -196,7 +233,7 @@ def main(load):
         print('\nData load complete!')
 
     # Generate the plots with the saved data
-    plot_scatter()
+    plot_scatter_trips()
 
 
 if __name__ == '__main__':
