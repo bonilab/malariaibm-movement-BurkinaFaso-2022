@@ -105,16 +105,16 @@ def plot_scatter():
     x = np.log10(model['population'])
     plot.errorbar(x, marshall['mean'], marshall['std'], 
                     linestyle='None', ecolor='black', elinewidth=1.5, zorder=1)    
-    plot.scatter(x, marshall['mean'], label='Marshall et al. Model (see Fig. 3a)',
+    plot.scatter(x, marshall['mean'], label='Marshall et al. model (Fig. 3a)',
                     facecolors='#5A5A5A', edgecolors='black', zorder=3)        
     plot.errorbar(x, model['mean'], model['std'], 
                     linestyle='None', ecolor='black', elinewidth=1.5, zorder=2)
-    plot.scatter(x, model['mean'], label='Mathematical Model With Best Fit and Travel Surface (see Fig. 3b)',
+    plot.scatter(x, model['mean'], label='Individual-based model with travel surface (Fig. 3b)',
                     facecolors='#D3D3D3', edgecolors='black', zorder=4)    
         
     
     # Add the labeled points to the map
-    plot.annotate('Bobo-Dioulasso', (np.log10(56000), 3400))        # Bobo-Dioulasso, population = 57734, trips = 3474.14
+    plot.annotate('Bobo-Dioulasso', (np.log10(55000), 3400))        # Bobo-Dioulasso, population = 57734, trips = 3474.14
     plot.annotate('Ouagadougou', (np.log10(200000), 3800))          # Ouagadougou, population = 203266, trips = 3981.72
     plot.annotate('Ouagadougou (Outskirts)', (np.log10(2100), 986)) # Ouagadougou / Outskirts, population = 2159, trips = 986
             
@@ -130,7 +130,7 @@ def plot_scatter():
     plot.legend(frameon=False)
     
     fig.tight_layout()
-    fig.savefig('out/ESM Fig. S5 - 300 dpi.png', dpi=300)
+    fig.savefig('out/ESM Fig. S4 - 300 dpi.png', dpi=300)
    
 
 def main(load):
@@ -156,4 +156,4 @@ def main(load):
 
 if __name__ == '__main__':
     if not os.path.exists('out'): os.mkdir('out')
-    main(True)
+    main(False)
