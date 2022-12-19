@@ -3,7 +3,7 @@ font.family  : monospace
 font.size    : 28.0
 font.monospace  : Ubuntu Mono, DejaVu Sans Mono, Andale Mono, monospace
 
-lines.markersize : 10
+lines.markersize : 12.5
 
 axes.grid          : False      ## display grid or not
 axes.titlesize     : 24         ## fontsize of the axes title
